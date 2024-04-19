@@ -1,0 +1,20 @@
+{% extends "base.html" %} 
+
+{% block title %} 演奏職専用ページ {% endblock %} 
+
+{% block stylesheet %} 
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'reset.css' %}" />
+{% endblock %} 
+
+{% block main %}
+<h2>演奏職専用ページ</h2>
+<p>
+  <a href="{% url 'kuragen_app:editmyschedule' %}">自分の練習参加予定を追加/編集</a><br />
+  <a href="{% url 'kuragen_app:editschedule' %}">練習日程調整</a><br />
+  <a href="{% url 'kuragen_app:editridenumbers' %}">乗り番調整</a><br />
+  <a href="{% url 'kuragen_app:editmembers' %}">団員情報</a><br />
+  <a href="{% url 'kuragen_app:editconcerts' %}">演奏会情報</a><br>
+  <a href="{% url 'kuragen_app:mypage' %}">マイページへ戻る</a>
+</p>
+{% endblock %}

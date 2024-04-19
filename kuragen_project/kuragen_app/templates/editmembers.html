@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %} 団員情報 {% endblock %}
+
+{% block stylesheet %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'reset.css' %}">
+{% endblock %}
+
+{% block main %}
+<h2>団員情報</h2>
+
+<table class="tablea">
+    <tr>
+        <th>名前</th>
+        <th>期</th>
+        <th>役職</th>
+    </tr>
+    {% for member in members %}
+    <tr>
+        <th>{{member.last_name}} {{member.last_name}}</th>
+        <th>{{member.generation}}</th>
+        <th>{{member.position}}</th>
+    </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="3">
+            <form>
+                {% csrf_token %}
+                {{ add_member_form }}
+                <input type="submit" name="add_member" value="追加">
+            </form>
+        </td>
+    </tr>
+</table>
+
+
+{% endblock %}

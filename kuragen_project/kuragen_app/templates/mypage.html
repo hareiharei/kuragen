@@ -1,0 +1,141 @@
+{% extends "base.html" %} 
+
+{% block title %} 団員マイページ {% endblock %} 
+
+{% block stylesheet %} 
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'reset.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'mypage.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'popup.css' %}" />
+{% endblock %} 
+
+{% block main %}
+<h2>団員マイページ</h2>
+<a href="{% url 'kuragen_app:ensoushoku' %}">演奏職専用ページへ</a>
+<h3>自分の練習スケジュール</h3>
+<ul class="tab-menu">
+  <li class="tab-item">前の月</li>
+  <li class="tab-item active">4月</li>
+  <li class="tab-item">5月</li>
+  <li class="tab-item">6月</li>
+  <li class="tab-item">新規作成</li>
+  <li class="tab-item">次の月</li>
+</ul>
+
+<div class="tab-box">
+  <div class="tab-content show">
+    <h3>2024年4月 練習スケジュール</h3>
+
+    <table>
+      <tr>
+        <th>日付</th>
+        <th>時限</th>
+        <th>部屋</th>
+        <th>練習内容</th>
+        <th>参加人数</th>
+        <th>備考</th>
+        <th></th>
+      </tr>
+      <tr>
+        <td>4/3(水)</td>
+        <td>5限</td>
+        <td>B101<br />(音楽練習室 月予約)</td>
+        <td>アイネクライネナハトムジーク<br />(合奏練)</td>
+        <td>15人</td>
+        <td>見学者1人<br />編集</td>
+        <td>
+          <label for="absent-popup" class="popup-label">欠席/遅刻登録</label
+          ><br />
+          <label for="practice-popup" class="popup-label">自主練参加登録</label>
+        </td>
+      </tr>
+    </table>
+    <p>全体のスケジュールを見る</p>
+  </div>
+  <div class="tab-content">
+    <h3>2024年5月 練習スケジュール</h3>
+  </div>
+  <div class="tab-content">
+    <h3>2024年6月 練習スケジュール</h3>
+  </div>
+</div>
+
+<h3>自分の乗り番</h3>
+<div class="noriban">
+  <h3>2024年 夏季定期演奏会</h3>
+
+  <table>
+    <tr>
+      <th>曲名</th>
+      <th>パート</th>
+      <th>指揮者</th>
+      <th>コンサートマスター</th>
+      <th>パートリーダー</th>
+      <th></th>
+    </tr>
+    <tr>
+      <td>アイネクライネナハトムジーク</td>
+      <td>Va</td>
+      <td>ヤマダ タロウ</td>
+      <td>スズキ ハナコ</td>
+      <td>カトウ ジロウ</td>
+      <td>他のメンバーを見る</td>
+    </tr>
+  </table>
+  <p>全体の乗り番表を見る</p>
+</div>
+
+<!-- 欠席/遅刻登録 ポップアップ -->
+<input type="checkbox" id="absent-popup" />
+<div class="popup-body" id="absent-popupbody">
+  <label for="absent-popup" class="popup-background"></label>
+  <div class="popup-window">
+    <label for="absent-popup" class="popup-close"
+      ><!--閉じるボタン-->
+      <span></span>
+    </label>
+    <div class="popup-paragraph">
+      <h3>欠席/遅刻登録</h3>
+      <p>
+        4/3(水) 5限<br />
+        アイネクライネナハトムジーク (合奏練) シラオ ハレイ
+      </p>
+      <form action="" method="post">
+        <input type="radio" id="option-absent" name="option-absent" />
+        <label for="option-absent">欠席</label>
+        <input type="radio" id="option-late" name="option-late" />
+        <label for="option-late">遅刻</label><br />
+        <label for="reason">欠席/遅刻理由</label><br />
+        <textarea id="absent-reason" name="absent-reason">
+入力してください</textarea
+        ><br />
+        <input type="submit" name="submit-absent" value="登録" />
+      </form>
+      <p>エラーメッセージ</p>
+    </div>
+  </div>
+</div>
+
+<!-- 自主練登録 ポップアップ -->
+<input type="checkbox" id="practice-popup" />
+<div class="popup-body" id="practice-popupbody">
+  <label for="practice-popup" class="popup-background"></label>
+  <div class="popup-window">
+    <label for="practice-popup" class="popup-close"
+      ><!--閉じるボタン-->
+      <span></span>
+    </label>
+    <div class="popup-paragraph">
+      <h3>自主練登録</h3>
+      <p>
+        4/3(水) 5限<br />
+        シラオ ハレイ
+      </p>
+      <form action="" method="post">
+        <input type="submit" name="submit-practice" value="登録" />
+      </form>
+      <p>エラーメッセージ</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

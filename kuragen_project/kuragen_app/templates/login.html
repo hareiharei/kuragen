@@ -1,0 +1,29 @@
+{% extends "base.html" %} 
+
+{% block title %} 団員ログイン {% endblock %} 
+
+{% block stylesheet %} 
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'reset.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'login.css' %}" />
+{% endblock %} 
+
+{% block main %}
+<div class="login">
+  <h2>団員ログイン</h2>
+  <div class="form">
+    <form action="" method="post">
+      {% csrf_token %}
+      {{ login_form.as_p }}
+      {% if login_form.non_field_errors %}
+        <div class="error">
+          {% for error in form.non_field_errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
+      <input type="submit" name="login" value="ログイン" />
+    </form>
+  </div>
+</div>
+{% endblock %}
