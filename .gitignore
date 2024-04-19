@@ -5,3 +5,4 @@ __pycache__
 djangoenv/
 myenv/
 kuragen_project1/
+local_settings.py
