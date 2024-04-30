@@ -41,7 +41,7 @@
     <th>Cb</th>
 </tr>
 {% for ride in song_rides[song.id] %}
-{% max_len = max(len(ride['Cond']), len(ride['1st_Vn']), len(ride['2nd_Vn']), len(ride['Va']), len(ride['Vc']), len(ride['Vc']) %}
+{% max_len = max(len(ride['Cond']), len(ride['1st_Vn']), len(ride['2nd_Vn']), len(ride['Va']), len(ride['Vc']), len(ride['Vc'])) %}
 {% for i in range(max_len) %}
 <tr>
     <td>{{ ride['1st_Vn'][i] | default:"" }}</td>

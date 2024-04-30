@@ -84,6 +84,7 @@ WSGI_APPLICATION = 'kuragen_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -94,10 +95,11 @@ DATABASES = {
         'PORT': '',
     }
 }
+'''
 
 # .envファイルにある環境変数をインポート -> DATABASESをアップデート
-db_env = env.db()
-DATABASES['default'].update(db_env)
+#db_env = env.db()
+#DATABASES['default'].update(db_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -143,8 +145,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'kuragen_app.Member'
 
 AUTHENTICATION_BACKENDS = [
-    'users.authentication.CustomBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'kuragen_app.backends.MemberAuthBackend'
 ]
 
 LOGIN_REDIRECT_URL = "mypage"

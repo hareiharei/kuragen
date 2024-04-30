@@ -12,14 +12,14 @@
 
 <table class="tablea">
     <tr>
-        <th>名前</th>
         <th>期</th>
+        <th>名前</th>
         <th>役職</th>
     </tr>
     {% for member in members %}
     <tr>
-        <th>{{member.last_name}} {{member.last_name}}</th>
         <th>{{member.generation}}</th>
+        <th>{{member.name}}</th>
         <th>{{member.position}}</th>
     </tr>
     {% endfor %}

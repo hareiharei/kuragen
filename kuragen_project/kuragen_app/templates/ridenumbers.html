@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %} 乗り番 {% endblock %}
+
+{% block stylesheet %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'reset.css' %}">
+{% endblock %}
+
+{% block main %}
+<h2>乗り番</h2>
+
+<!-- <p>演奏会を選択
+<form action="" method="post">{}
+{% csrf_token %}
+{{ select_concert_form }}
+<input type="submit" value="選択" name="select_concert">
+</form>
+</p> -->
+
+{% for concert in concerts %}
+<h3> {{ concert.date_end.year }}年{{ concert.season }} 乗り番 </h3>
+
+{% for song in songs[concert.id] %}
+<p>{{ song.song_name }} / {{ song.author }}</p>
+<p>指揮者: {{ song_rides[song.id]['Cond'] }}</p>
+
+<table>
+<tr>
+    <th>1st Vn</th>
+    <th>2nd Vn</th>
+    <th>Va</th>
+    <th>Vc</th>
+    <th>Cb</th>
+</tr>
+{% for ride in song_rides[song.id] %}
+{% max_len = max(len(ride['Cond']), len(ride['1st_Vn']), len(ride['2nd_Vn']), len(ride['Va']), len(ride['Vc']), len(ride['Vc'])) %}
+{% for i in range(max_len) %}
+<tr>
+    <td>{{ ride['1st_Vn'][i] | default:"" }}</td>
+    <td>{{ ride['2nd_Vn'][i] | default:"" }}</td>
+    <td>{{ ride['Va'][i] | default:"" }}</td>
+    <td>{{ ride['Vc'][i] | default:"" }}</td>
+    <td>{{ ride['Cb'][i] | default:"" }}</td>
+</tr>
+{% endfor %}
+{% endfor %}
+
+</table>
+{% endfor %}
+{% endfor %}
+
+{% endblock %}

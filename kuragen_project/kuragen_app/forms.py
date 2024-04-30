@@ -4,22 +4,9 @@ from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from .models import Schedule, Member, Position, Concert, Song, RideNumber
 
-# ログイン
+# ログイン 
 
 class LoginForm(AuthenticationForm):
-    #name = forms.CharField(label = '名前（全角カナ）')
-    '''
-    class Meta:
-        model = Member
-        fields = ['name', 'password']
-        labels = {
-            'password': 'パスワード',
-            'name': '名前（全角カナ）',
-        }
-        widgets = {
-            'password': forms.PasswordInput
-        }
-    '''
     
     def __init__(self, *args, **kwargs):
         super(LoginForm, self).__init__(*args, **kwargs)

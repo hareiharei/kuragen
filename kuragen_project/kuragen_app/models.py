@@ -34,7 +34,7 @@ class Position(models.Model):
 
 
 class MemberManager(BaseUserManager):
-    def create_user(self, name, generation, position, password, **extra_fields):
+    def create_user(self, name, generation, position, password=None, **extra_fields):
         if not name:
             raise ValueError('名前を入力してください')
         if not generation:
@@ -44,23 +44,28 @@ class MemberManager(BaseUserManager):
         if not password:
             raise ValueError('パスワードを入力してください')
         
+        position_temp = Position.objects.get(pk=position)
+
         member = self.model(
             name=name,
             generation=generation,
-            position=position,
+            position=position_temp
             **extra_fields
         )
+
         member.set_password(password)
         extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_superuser', False)
         member.save(using=self._db)
         return member
 
     def create_superuser(self, name, generation, position, password, **extra_fields):
+        position_temp = Position.objects.get(pk=position)
+
         member = self.model(
             name=name,
             generation=generation,
-            position=position,
+            position=position_temp
             **extra_fields
         )
         member.set_password(password)
