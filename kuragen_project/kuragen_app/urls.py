@@ -7,10 +7,10 @@ urlpatterns = [
     path('login/', views.LoginView.as_view(), name='login'),
     path('mypage/', views.MyPageView.as_view(), name='mypage'),
     path('ridenumbers/', views.RideNumbersView.as_view(), name='ridenumbers'),
-    path('ensoushoku/', views.EnsoushokuView.as_view, name='ensoushoku'),
-    path('ensoushoku/myschedule/', views.editmyschedule, name='editmyschedule'),
-    path('ensoushoku/schedule/', views.editschedule, name='editschedule'),
-    path('ensoushoku/ridenumbers/', views.editridenumbers, name='editridenumbers'),
-    path('ensoushoku/members/', views.editmembers, name='editmembers'),
-    path('ensoushoku/concerts/', views.editconcerts, name='editconcerts')
+    path('ensoushoku/', views.EnsoushokuView.as_view(), name='ensoushoku'),
+    path('ensoushoku/myschedule/', views.EditMyScheduleView.as_view(), name='editmyschedule'),
+    path('ensoushoku/schedule/', views.EditScheduleView.as_view(), name='editschedule'),
+    path('ensoushoku/ridenumbers/', views.EditRideNumbersView.as_view(), name='editridenumbers'),
+    path('ensoushoku/members/', views.EditMembersView.as_view(), name='editmembers'),
+    path('ensoushoku/concerts/', views.EditConcertsView.as_view(), name='editconcerts')
 ]

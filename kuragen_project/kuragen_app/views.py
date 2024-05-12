@@ -6,7 +6,9 @@ from django.views.generic.edit import FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import LoginView as BaseLoginView
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Count, Q
+from django.utils import timezone
+from datetime import timedelta
 from . import forms
 from . import models
 #from .forms import AddScheduleForm, AddRideNumberForm, AddConcertForm, AddSongForm, AddMemberForm, LoginForm #, SelectConcertForm
@@ -43,9 +45,47 @@ class EnsoushokuView(LoginRequiredMixin, TemplateView):
 class EditMyScheduleView(LoginRequiredMixin, TemplateView):
     template_name = 'editmyschedule.html'
 
-class EditScheduleView(LoginRequiredMixin, FormView):
+class EditScheduleView(FormView, TemplateView, View):
     template_name = 'editschedule.html'
     form_class = forms.AddScheduleForm
+
+    def get_current_data(self):
+        now = timezone.now()
+        start_of_month = now.replace(day=1)
+        next_month = start_of_month + timedelta(days=32)
+        end_of_month = next_month.replace(day=1) - timedelta(days=1)
+
+        notes_prefetch = Prefetch('note_set', queryset=models.Note.select_related('member'))
+        get_schedules = models.Schedule.objects.filter(
+                date__gte=start_of_month,
+                date__lte=end_of_month
+            ).select_related('period').prefetch_related(
+                notes_prefetch
+            ).annotate(
+                absent_count=Count('participants', filter=Q(participants__attendance='absent')),
+                participants=Count('song__ridenumbers')
+            )
+        
+        weekdays = ["月", "火", "水", "木", "金", "土", "日"]
+        schedules = []
+        for s in get_schedules:
+            notes=""
+            for note in s.note_set.all():
+                notes += f"{note.note} ({note.member.name})\n"
+
+            schedules.append({
+                'date': s.date.strftime("%m/%d") + f"({weekdays[s.date.weekday()]})",
+                'period': s.period,
+                'room': f"{s.room_name} ({s.get_room_type_display()})",
+                'practice': f"{s.song.song_name} ({s.get_practice_type_display()})",
+                'participants': s.participants - s.absent_count,
+                'notes': notes,
+            })
+        
+        current_data = {'schedules': schedules}
+
+        return current_data
+
 
     def get(self, request, *args, **kwargs):
         add_schedule_form = self.form_class()
@@ -65,7 +105,7 @@ class EditScheduleView(LoginRequiredMixin, FormView):
         })
     
 
-class EditRideNumbers(LoginRequiredMixin, View):
+class EditRideNumbersView(LoginRequiredMixin, View):
     template_name = 'editridenumbers.html'
 
     def get_current_data(self):
@@ -87,7 +127,7 @@ class EditRideNumbers(LoginRequiredMixin, View):
                     if ride.part not in song_rides[song.id]:
                         song_rides[song.id][ride.part] = []
                     song_rides[song.id][ride.part].append(
-                        f"{ride.member.last_name} {ride.member.first_name}"
+                        f"{ride.member.name}"
                         )
         
         current_data = {
@@ -163,7 +203,7 @@ class EditMembersView(LoginRequiredMixin, View):
         })
     
 
-class EditConcertsView(LoginRequiredMixin, View):
+class EditConcertsView(LoginRequiredMixin, TemplateView, View):
     template_name = 'editconcerts.html'
 
     def get_current_data(self):

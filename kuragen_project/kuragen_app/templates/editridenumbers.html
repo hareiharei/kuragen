@@ -26,12 +26,13 @@
 <p>指揮者: {{ song_rides[song.id]['Cond'] }}</p>
 指揮者を追加
 <form action="" method="post">
-            {% csrf_token %}
-            {{ add_ride_number_form }}
-            <input type="hidden" name="song_id" value={{ song.id }}>
-            <input type="hidden" name="part" value="Cond">
-            <input type="submit" name="add_ride_number" value="追加">
-        </form>
+    {% csrf_token %}
+    {{ add_ride_number_form }}
+    <input type="hidden" name="song_id" value={{ song.id }}>
+    <input type="hidden" name="part" value="Cond">
+    <input type="submit" name="add_ride_number" value="追加">
+</form>
+
 <table>
 <tr>
     <th>1st Vn</th>
@@ -52,6 +53,7 @@
 </tr>
 {% endfor %}
 {% endfor %}
+{% if user.is_authenticated and user.is_staff %}
 <tr>
     <td>
         追加 <br>
@@ -106,6 +108,7 @@
         </form>
     </td>
 </tr>
+{% endif %}
 </table>
 {% endfor %}
 {% endfor %}

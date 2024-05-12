@@ -23,6 +23,7 @@
         <th>{{member.position}}</th>
     </tr>
     {% endfor %}
+    {% if user.is_authenticated and user.is_staff %}
     <tr>
         <td colspan="3">
             <form>
@@ -32,6 +33,7 @@
             </form>
         </td>
     </tr>
+    {% endif %}
 </table>
 
 
