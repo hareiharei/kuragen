@@ -8,7 +8,9 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import LoginView as BaseLoginView
 from django.db.models import Prefetch, Count, Q
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, datetime, date
+from calendar import monthrange
+from collections import defaultdict
 from . import forms
 from . import models
 #from .forms import AddScheduleForm, AddRideNumberForm, AddConcertForm, AddSongForm, AddMemberForm, LoginForm #, SelectConcertForm
@@ -45,35 +47,44 @@ class EnsoushokuView(LoginRequiredMixin, TemplateView):
 class EditMyScheduleView(LoginRequiredMixin, TemplateView):
     template_name = 'editmyschedule.html'
 
-class EditScheduleView(FormView, TemplateView, View):
+class EditScheduleView(LoginRequiredMixin, TemplateView, FormView):
     template_name = 'editschedule.html'
     form_class = forms.AddScheduleForm
 
-    def get_current_data(self):
-        now = timezone.now()
-        start_of_month = now.replace(day=1)
-        next_month = start_of_month + timedelta(days=32)
-        end_of_month = next_month.replace(day=1) - timedelta(days=1)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        year_month = self.kwargs.get('year_month', datetime.now().strftime("%Y%m"))
+        context['year_month'] = year_month
+        context['schedule_data'] = self.get_current_data(year_month)
+
+    def get_current_data(self, year_month):
+        year = int(year_month[:4])
+        month = int(year_month[4:])
+        start_of_month = date(year, month, 1)
+        end_of_month = date(year, month, monthrange(year, month)[1])
 
         notes_prefetch = Prefetch('note_set', queryset=models.Note.select_related('member'))
-        get_schedules = models.Schedule.objects.filter(
-                date__gte=start_of_month,
-                date__lte=end_of_month
+        get_schedules = models.Schedule.objects.all(
             ).select_related('period').prefetch_related(
                 notes_prefetch
             ).annotate(
                 absent_count=Count('participants', filter=Q(participants__attendance='absent')),
                 participants=Count('song__ridenumbers')
+            ).filter(
+                 date__gte=start_of_month,
+                 date__lte=end_of_month
             )
         
         weekdays = ["月", "火", "水", "木", "金", "土", "日"]
-        schedules = []
+        
+        schedules_by_month = []
         for s in get_schedules:
             notes=""
             for note in s.note_set.all():
                 notes += f"{note.note} ({note.member.name})\n"
 
-            schedules.append({
+            schedules_by_month.append({
+
                 'date': s.date.strftime("%m/%d") + f"({weekdays[s.date.weekday()]})",
                 'period': s.period,
                 'room': f"{s.room_name} ({s.get_room_type_display()})",
@@ -81,16 +92,22 @@ class EditScheduleView(FormView, TemplateView, View):
                 'participants': s.participants - s.absent_count,
                 'notes': notes,
             })
-        
-        current_data = {'schedules': schedules}
+
+        current_data = {
+                        'schedules_by_month': dict(schedules_by_month),
+                        'year_month': year_month
+                       }
 
         return current_data
 
 
     def get(self, request, *args, **kwargs):
         add_schedule_form = self.form_class()
+        current_data = self.get_current_data()
+
         return render(request, self.template_name, {
-            'add_schedule_form': add_schedule_form
+            'add_schedule_form': add_schedule_form,
+            'schedules': current_data['schedules']
         })
     
     def post(self, request, *args, **kwargs):
@@ -231,47 +248,43 @@ class EditConcertsView(LoginRequiredMixin, TemplateView, View):
     
     def get(self, request, *args, **kwargs):
         add_concert_form = forms.AddConcertForm()
+        add_song_form = forms.AddSongForm()
+        current_data = self.get_current_data()
 
+        return render(request, self.template_name, {
+            'add_concert_form': add_concert_form,
+            'add_song_form': add_song_form,
+            'concerts': current_data['concerts'],
+            'songs': current_data['songs'],
+            'leaders': current_data['leaders']
+        })
 
-def editconcerts(request):
-    concerts = Concert.objects.all()
-    member_prefetch = Prefetch('member')
-    ride_numbers = RideNumber.objects.filter(leader='1').prefetch_related(member_prefetch)
-    songs_in_concerts = Concert.objects.prefetch_related(
-        Prefetch('song_set', queryset=Song.objects.prefetch_related(
-            Prefetch('ridenumber_set', queryset=ride_numbers, to_attr='leaders')
-        ))
-    )
-    songs = {}
-    leaders = {}
-    for concert in songs_in_concerts:
-        songs[concert.id] = concert.song_set.all()
-        for song in songs[concert.id]:
-            leaders[song.id] = {leaders.part: f"{leader.member.last_name} {leader.member.first_name}" for leader in song.leaders}
+    def post(self, request, *args, **kwargs):
+        current_data = self.get_current_data()
 
-    if request.method == 'POST':
-        if 'add_concert' in request.POST:
-            add_concert_form = AddConcertForm(request.POST)
-            add_song_form = AddSongForm()
-            if add_concert_form.is_valid():
-                add_concert_form.save()
+        if request.method == 'POST':
+            if 'add_concert' in request.POST:
+                add_concert_form = forms.AddConcertForm(request.POST)
+                add_song_form = forms.AddSongForm()
+                if add_concert_form.is_valid():
+                    add_concert_form.save()
 
-        elif 'add_song' in request.POST:
-            add_concert_form = AddConcertForm()
-            add_song_form = AddSongForm(request.POST)
-            if add_song_form.is_valid():
-                add_song_form.save()
-    else:
-        add_concert_form = AddConcertForm()
-        add_song_form = AddSongForm()
+            elif 'add_song' in request.POST:
+                add_concert_form = forms.AddConcertForm()
+                add_song_form = forms.AddSongForm(request.POST)
+                if add_song_form.is_valid():
+                    add_song_form.save()
+        else:
+            add_concert_form = forms.AddConcertForm()
+            add_song_form = forms.AddSongForm()
 
-    return render(request, 'editconcerts.html', 
-                  context={
-                      'add_concert_form': add_concert_form,
-                      'add_song_form': add_song_form,
-                      'concerts': concerts,
-                      'songs': songs,
-                      'leaders': leaders
-                    })
+        return render(request, 'editconcerts.html', 
+                    context={
+                        'add_concert_form': add_concert_form,
+                        'add_song_form': add_song_form,
+                        'concerts': current_data['concerts'],
+                        'songs': current_data['songs'],
+                        'leaders': current_data['leaders']
+                        })
 
 
