@@ -8,7 +8,8 @@ class Member(Base):
 
     id = Column(Integer, primary_key=True)
     email = Column(String, nullable=False)
-    last_name = Column(String, nullable=False)  # カタカナ
+    password = Column(String, nullable=False)    # ハッシュ化する
+    last_name = Column(String, nullable=False)   # カタカナ
     first_name = Column(String, nullable=False)  # カタカナ
     generation = Column(Integer, nullable=False)
 

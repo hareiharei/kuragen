@@ -3,6 +3,7 @@ from datetime import date, datetime, time
 
 class MemberBase(BaseModel):
     email: str
+    password: str
     last_name: str
     first_name: str
     generation: int
