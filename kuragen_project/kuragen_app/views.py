@@ -19,7 +19,7 @@ from . import models
 
 # Create your views here.
 
-class LoginView(BaseLoginView):
+class LoginView(BaseLoginView, TemplateView):
     form_class = forms.LoginForm
     template_name = 'login.html'
     form_name = 'login_form'

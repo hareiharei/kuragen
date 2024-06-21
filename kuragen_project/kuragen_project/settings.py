@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from .local_settings import MY_DATABASES, MY_SECRET_KEY
 #import environ
 
 #env = environ.Env()
@@ -26,6 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 
 #SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = MY_SECRET_KEY
 
 try:
     from .local_settings import *
@@ -84,18 +86,20 @@ WSGI_APPLICATION = 'kuragen_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-'''
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
-    }
-}
-'''
+DATABASES = MY_DATABASES
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'kuragen',
+#         'USER': 'root',
+#         'PASSWORD': '',
+#         'HOST': 'localhost',
+#         'POST': '3066'
+#     }
+# }
+
 
 # .envファイルにある環境変数をインポート -> DATABASESをアップデート
 #db_env = env.db()
