@@ -14,6 +14,9 @@ class Member(MemberBase):
     class Config:
         orm_mode = True
 
+class MemberCreate(MemberBase):
+    pass
+
 class RoleTypeBase(BaseModel):
     title: str
     is_staff: bool
