@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from ... import models, schemas
 
-def create_member(db: Session, creating_member: schemas.MemberCreate):
+def create_member(db: Session, member: schemas.MemberCreate):
     # メンバーを作成
     # db.execute(
     #     """
@@ -11,14 +11,14 @@ def create_member(db: Session, creating_member: schemas.MemberCreate):
     #     (:email, :password, :last_name, :first_name, :generation)
     #     """,
     #     {
-    #         'email': creating_member.email,
-    #         'password': creating_member.password,
-    #         'last_name': creating_member.last_name,
-    #         'first_name': creating_member.first_name,
-    #         'generation': creating_member.generation
+    #         'email': member.email,
+    #         'password': member.password,
+    #         'last_name': member.last_name,
+    #         'first_name': member.first_name,
+    #         'generation': member.generation
     #     }
     # )
-    db_member = models.Member.model_validate(creating_member)
+    db_member = models.Member.model_validate(member)
     db.commit()
     db.refresh(db_member)
     return db_member
