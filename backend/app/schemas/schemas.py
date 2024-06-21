@@ -14,10 +14,12 @@ class Member(MemberBase):
     class Config:
         orm_mode = True
 
-class RoleType(BaseModel):
-    id: int
+class RoleTypeBase(BaseModel):
     title: str
     is_staff: bool
+
+class RoleType(RoleTypeBase):
+    id: int
 
 class Role(BaseModel):
     id: int
