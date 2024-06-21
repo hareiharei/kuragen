@@ -14,3 +14,8 @@ def create_member(db: Session, member: schemas.MemberCreate):
         }
     )
     db.commit()
+
+'''
+参考にしたサイト：
+https://fastapi.tiangolo.com/tutorial/sql-databases/#__tabbed_1_1
+'''
