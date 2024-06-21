@@ -11,6 +11,9 @@ class MemberBase(BaseModel):
 class Member(MemberBase):
     id: int
 
+    class Config:
+        orm_mode = True
+
 class RoleType(BaseModel):
     id: int
     title: str
@@ -20,6 +23,9 @@ class Role(BaseModel):
     id: int
     member_id: int
     roletype_id: int
+
+    class Config:
+        orm_mode = True
     
 class ConcertBase(BaseModel):
     title: str
@@ -30,6 +36,9 @@ class ConcertBase(BaseModel):
 class Concert(ConcertBase):
     id: int
 
+    class Config:
+        orm_mode = True
+
 class SongBase(BaseModel):
     title: str
     author: str | None = None
@@ -37,6 +46,9 @@ class SongBase(BaseModel):
 class Song(SongBase):
     id: int
     concert_id: int
+
+    class Config:
+        orm_mode = True
 
 class RideNumberBase(BaseModel):
     part: str
@@ -47,6 +59,9 @@ class RideNumber(RideNumberBase):
     song_id: int
     member_id: int
 
+    class Config:
+        orm_mode = True
+
 class PeriodBase(BaseModel):
     title: str
     starts_at: time
@@ -54,6 +69,9 @@ class PeriodBase(BaseModel):
 
 class Period(PeriodBase):
     id: int
+
+    class Config:
+        orm_mode = True
 
 class ScheduleBase(BaseModel):
     held_on: date
@@ -68,13 +86,18 @@ class Schedule(ScheduleBase):
     period_id: int
     song_id: int
 
+    class Config:
+        orm_mode = True
+
 class AbsenseBase(BaseModel):
     content: str
     created_at: datetime
     updated_at: datetime
 
-
 class Absense(AbsenseBase):
     id: int
     schedule_id: int
     member_id: int
+
+    class Config:
+        orm_mode = True
