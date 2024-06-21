@@ -100,4 +100,6 @@ class Note(Base):
 参考にしたサイト:
 https://fastapi.tiangolo.com/tutorial/sql-databases/
 
+relationship追加する必要あり
+
 '''
